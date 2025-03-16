@@ -1,3 +1,5 @@
+![apple-touch-icon](https://github.com/user-attachments/assets/7f064749-ce33-4a95-a4a7-09bed5012405)
+
 # Audiobookshelf Manager
 
 https://github.com/user-attachments/assets/d76ac1e3-0336-4069-b055-3960019ca918
