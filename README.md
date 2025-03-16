@@ -1,6 +1,6 @@
 ### <div align="center">![android-chrome-192x192](https://github.com/user-attachments/assets/925b5437-2d04-4239-8751-d4e5e1184977)</div>
 
-# <div align="center"># Audiobookshelf Manager</div>
+# <div align="center">Audiobookshelf Manager</div>
 
 https://github.com/user-attachments/assets/d76ac1e3-0336-4069-b055-3960019ca918
 
