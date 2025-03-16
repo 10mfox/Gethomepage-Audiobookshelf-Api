@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "env": {
+    "AUDIOBOOKSHELF_BASE_URL": "http://localhost:13378",
+    "AUDIOBOOKSHELF_API_TOKEN": "",
+    "AUDIOBOOKSHELF_LIBRARY_ID": "",
+    "AUDIOBOOKSHELF_LIBRARY_IDS": "",
+    "HOMEPAGE_IP": "",
+    "HOST_IP": ""
+  },
+  "ui": {
+    "darkMode": true,
+    "maxItems": 15
+  },
+  "formats": {
+    "global": {
+      "primaryFormat": "${title} - by ${author_name}",
+      "additionalFormat": "${added_at_relative}"
+    },
+    "libraries": {}
+  },
+  "cache": {
+    "ttl": {
+      "audiobooks": 60,
+      "libraries": 300,
+      "formats": 120
+    },
+    "enabled": true
+  }
+}
