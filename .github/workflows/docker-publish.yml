@@ -1,0 +1,79 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main  # Change if using a different branch
+
+jobs:
+  determine-version:
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.version.outputs.new_version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for versioning
+
+      - name: Determine New Version
+        id: version
+        run: |
+          # Get latest tag (or default to 0.1.0)
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
+
+          # Determine change scope (major, minor, patch)
+          if git diff --name-only HEAD^ | grep -q 'Dockerfile\|src/'; then
+            CHANGE_TYPE="minor"
+          elif git diff --name-only HEAD^ | grep -q 'README.md\|docs/'; then
+            CHANGE_TYPE="patch"
+          else
+            CHANGE_TYPE="patch"
+          fi
+
+          # Increment version
+          MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
+          MINOR=$(echo $LATEST_TAG | cut -d. -f2)
+          PATCH=$(echo $LATEST_TAG | cut -d. -f3)
+
+          if [ "$CHANGE_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$CHANGE_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "New Version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: determine-version
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Enable QEMU for Multi-Arch
+        run: docker run --privileged --rm tonistiigi/binfmt --install all
+
+      - name: Build and Push Multi-Arch Docker Image
+        env:
+          IMAGE_NAME: ghcr.io/10mfox/gethomepage-audiobookshelf-api
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6,linux/ppc64le,linux/s390x \
+            -t $IMAGE_NAME:${{ needs.determine-version.outputs.new_version }} \
+            -t $IMAGE_NAME:beta \
+            --push .
