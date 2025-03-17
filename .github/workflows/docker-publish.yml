@@ -1,9 +1,9 @@
-name: Build and Push Docker Image
+name: Build and Push Beta Docker Image
 
 on:
   push:
     branches:
-      - main  # Change if using a different branch
+      - beta  # Ensure this runs only for the 'beta' branch
 
 jobs:
   determine-version:
@@ -14,13 +14,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for versioning
+          fetch-depth: 0  # Ensure full history is fetched for versioning
 
       - name: Determine New Version
         id: version
         run: |
           # Get latest tag (or default to 0.1.0)
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.0")
+          LATEST_TAG=$(git describe --tags --match "beta-*" --abbrev=0 2>/dev/null || echo "beta-0.1.0")
+          LATEST_VERSION=${LATEST_TAG#beta-}
 
           # Determine change scope (major, minor, patch)
           if git diff --name-only HEAD^ | grep -q 'Dockerfile\|src/'; then
@@ -32,9 +33,9 @@ jobs:
           fi
 
           # Increment version
-          MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
-          MINOR=$(echo $LATEST_TAG | cut -d. -f2)
-          PATCH=$(echo $LATEST_TAG | cut -d. -f3)
+          MAJOR=$(echo $LATEST_VERSION | cut -d. -f1)
+          MINOR=$(echo $LATEST_VERSION | cut -d. -f2)
+          PATCH=$(echo $LATEST_VERSION | cut -d. -f3)
 
           if [ "$CHANGE_TYPE" = "major" ]; then
             MAJOR=$((MAJOR + 1))
@@ -47,7 +48,7 @@ jobs:
             PATCH=$((PATCH + 1))
           fi
 
-          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          NEW_VERSION="beta-${MAJOR}.${MINOR}.${PATCH}"
           echo "New Version: $NEW_VERSION"
           echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
