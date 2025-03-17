@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Github } from 'lucide-react';
 import Navbar from './components/layout/Navbar';
 import RecentView from './components/dashboard/RecentView';
 import SetupView from './components/setup/SetupView';
@@ -9,11 +10,29 @@ import FormatSettingsView from './components/settings/FormatSettingsView';
 import HomepageConfigView from './components/settings/HomepageConfigView';
 
 /**
+ * Footer Component
+ */
+export const Footer = () => {
+  return (
+    <footer className="fixed bottom-0 left-0 right-0 p-2 bg-black/20 backdrop-blur-sm border-t border-white/5 text-center z-10">
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="text-sm text-gray-400">
+          Created by <a href="https://github.com/10mfox" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-200" style={{ color: `rgb(var(--accent))` }}>10mfox</a>
+        </div>
+        <a href="https://github.com/10mfox/Gethomepage-Audiobookshelf-Api" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors duration-200">
+          <Github className="h-5 w-5" />
+        </a>
+      </div>
+    </footer>
+  );
+};
+
+/**
  * Main Application Component
  */
 function App() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white pb-16">
       <Navbar />
       
       <main className="max-w-7xl mx-auto px-4 py-6">
@@ -28,11 +47,7 @@ function App() {
         </Routes>
       </main>
       
-      <footer className="mt-12 py-6 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
-          <p>Audiobookshelf Manager • Refresh Interval: 60 seconds</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
