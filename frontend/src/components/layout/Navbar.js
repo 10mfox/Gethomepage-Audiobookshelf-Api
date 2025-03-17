@@ -51,7 +51,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0 flex items-center">
-            <span className="text-xl font-bold text-white">Audiobookshelf Manager Testing</span>
+            <span className="text-xl font-bold text-white">Audiobookshelf Manager Test</span>
           </div>
           
           <div className="hidden md:block">
